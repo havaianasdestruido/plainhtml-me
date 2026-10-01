@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>plainhtml — visual gallery</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+<h1>plainhtml visual gallery</h1>
+<p>Every pattern in the plainhtml skill, rendered by your browser's default stylesheet. There is no CSS in this file. Icons are emoji and text glyphs; boxes are <code>fieldset</code>, <code>details</code>, <code>table</code>, <code>blockquote</code>, and <code>pre</code>.</p>
+
+<form id="gallery-form" onsubmit="return false;">
+
+    <fieldset>
+        <legend>Toolbar row</legend>
+        <div>
+            <button type="button">▶ Run</button>
+            <button type="button">⏹ Stop</button>
+            <button type="button">↻ Restart</button>
+            <button type="button">🗑 Clear</button>
+        </div>
+        <p>Buttons are inline-block: one <code>&lt;div&gt;</code> = one row, whitespace in the source is the gap. Split long toolbars into explicit rows:</p>
+        <div>
+            <button type="button">⤓ Export CSV</button>
+            <button type="button">⤓ Export JSON</button>
+            <button type="button">⎙ Print</button>
+        </div>
+        <div>
+            <button type="button" disabled>⏸ Pause (disabled)</button>
+            <button type="button"><mark>★ Featured</mark></button>
+            <button type="button" onclick="say('Clicked!')">⚡ Click me</button>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Fields</legend>
+        <label for="name-in">Name:</label>
+        <input id="name-in" type="text" size="24" placeholder="Ada Lovelace">
+        <label for="q-in">Search:</label>
+        <input id="q-in" type="search" size="18" list="known" placeholder="type or pick...">
+        <datalist id="known">
+            <option value="api"></option>
+            <option value="worker"></option>
+            <option value="scheduler"></option>
+        </datalist>
+        <p>
+            <label for="n-in">Retries:</label>
+            <input id="n-in" type="number" min="0" max="10" step="1" value="3" size="4">
+            <label for="d-in">Start date:</label>
+            <input id="d-in" type="date">
+            <label for="c-in">Theme color:</label>
+            <input id="c-in" type="color" value="#4a90d9">
+            <label for="f-in">Attachment:</label>
+            <input id="f-in" type="file">
+        </p>
+        <label for="gain-in">Gain:</label>
+        <input id="gain-in" type="range" min="0" max="100" value="70" oninput="document.getElementById('gain-out').value = this.value">
+        <output id="gain-out" for="gain-in">70</output>
+        <p>
+            <label for="note-in">Notes:</label><br>
+            <textarea id="note-in" rows="3" cols="60" placeholder="Multi-line text — rows and cols are the size..."></textarea>
+        </p>
+    </fieldset>
+
+    <fieldset>
+        <legend>Choices</legend>
+        <div>
+            <label><input type="radio" name="mode" value="text" checked> Text</label>
+            <label><input type="radio" name="mode" value="voice"> Voice</label>
+            <label><input type="radio" name="mode" value="auto"> Auto</label>
+        </div>
+        <div>
+            <label><input type="checkbox" id="tts-chk"> Speak responses (TTS)</label>
+            <label><input type="checkbox" checked> Save history</label>
+        </div>
+        <p>
+            <label for="model-sel">Model:</label>
+            <select id="model-sel">
+                <optgroup label="Small">
+                    <option value="qwen-3b">Qwen 2.5 3B</option>
+                    <option value="llama-3b">Llama 3.2 3B</option>
+                </optgroup>
+                <optgroup label="Medium">
+                    <option value="qwen-7b" selected>Qwen 2.5 7B</option>
+                    <option value="gemma-4b">Gemma 3 4B</option>
+                </optgroup>
+            </select>
+            <label for="layer-sel">Layers (size=4 → list box):</label>
+            <select id="layer-sel" size="4" multiple>
+                <option>embed</option>
+                <option selected>attn</option>
+                <option selected>mlp</option>
+                <option>head</option>
+            </select>
+        </p>
+    </fieldset>
+
+    <fieldset>
+        <legend>Gauges, progress, and the three free colors</legend>
+        <p>Only three elements bring color: <code>meter</code> (green/yellow/red), <code>mark</code> (yellow), <code>progress</code> (blue).</p>
+        <p>
+            <label for="cpu-m">cpu</label>
+            <meter id="cpu-m" min="0" max="100" low="40" high="80" optimum="20" value="52" style="width:30%"></meter> 52%
+            <label for="mem-m">mem</label>
+            <meter id="mem-m" min="0" max="100" low="40" high="80" optimum="20" value="78" style="width:30%"></meter> <mark>78%</mark>
+            <label for="dsk-m">disk</label>
+            <meter id="dsk-m" min="0" max="100" low="40" high="80" optimum="20" value="91" style="width:30%"></meter> <strong>91%</strong>
+        </p>
+        <p>
+            <label for="job-p">job</label>
+            <progress id="job-p" max="100" value="35" style="width:60%"></progress>
+            <label for="spin-p">spinner</label>
+            <progress id="spin-p" style="width:20%"></progress>
+        </p>
+    </fieldset>
+
+    <fieldset>
+        <legend>State and text-level visuals</legend>
+        <p><mark>highlighted</mark> · <strong>bold value</strong> · <em>emphasis</em> · <del>removed</del> · <ins>added</ins> · <u>underline</u> · <small>secondary note</small></p>
+        <p>Press <kbd>Ctrl</kbd> + <kbd>C</kbd> to run <code>ollama run qwen</code>. Expected output: <samp>ready</samp>, variance <var>σ</var> below <sub>1</sub><sup>-3</sup>. Hover <abbr title="Random Access Memory">RAM</abbr> for a native tooltip.</p>
+        <p>Status glyphs: ✓ healthy · ⚠ degraded · ✕ failed · ○ off · ⏳ waiting · → next</p>
+    </fieldset>
+
+    <fieldset>
+        <legend>blockquote note and pre chart</legend>
+        <blockquote><p>ℹ Note: models stay cached between runs. Use <strong>Unload</strong> to free memory.</p></blockquote>
+        <blockquote><p>⚠ Warning: 91% disk usage. Downloads may fail.</p></blockquote>
+        <pre>
+  cpu  ████████░░░░░░░░  52%
+  mem  ████████████░░░░  78%
+  disk ██████████████░░  91%
+  gpu  ██░░░░░░░░░░░░░░  12%
+        </pre>
+    </fieldset>
+
+    <fieldset>
+        <legend>Accordion and exclusive tabs (details)</legend>
+        <details name="tabs" open>
+            <summary>Chart</summary>
+            <pre>
+  tokens/s  ▁▂▃▅▆▇█▇▆▅▃▃▂▂▃
+            </pre>
+        </details>
+        <details name="tabs">
+            <summary>Table</summary>
+            <table>
+                <tr><th>tick</th><th>tokens/s</th></tr>
+                <tr><td>1</td><td>12</td></tr>
+                <tr><td>2</td><td>31</td></tr>
+            </table>
+        </details>
+        <details name="tabs">
+            <summary>Raw log</summary>
+            <pre>[12:00:01] engine loaded
+[12:00:02] warmup done</pre>
+        </details>
+        <p>Sharing <code>name="tabs"</code> makes opening one close the others — css-less tabs, zero JS.</p>
+    </fieldset>
+
+    <fieldset>
+        <legend>Modal dialog and popover menu</legend>
+        <div>
+            <button type="button" onclick="document.getElementById('log-dlg').showModal()">Open modal</button>
+            <button type="button" popovertarget="act-menu">Actions ▾</button>
+            <button type="button" popovertarget="tip" popovertargetaction="show">ⓘ More info</button>
+        </div>
+        <dialog id="log-dlg">
+            <form method="dialog">
+                <fieldset>
+                    <legend>Job log</legend>
+                    <pre>[12:00:01] start
+[12:00:04] ok</pre>
+                    <button>Close</button>
+                </fieldset>
+            </form>
+        </dialog>
+        <div id="act-menu" popover>
+            <p><button type="button">Duplicate</button></p>
+            <p><button type="button">Export</button></p>
+            <p><button type="button">Delete</button></p>
+        </div>
+        <div id="tip" popover>
+            <p>Popovers float above the page and close on outside click. Esc closes modals.</p>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Two-column layout (table)</legend>
+        <table>
+            <tr>
+                <td valign="top" width="40%">
+                    <fieldset>
+                        <legend>Sidebar</legend>
+                        <p>Cells top-align with <code>valign="top"</code>. Put whole panels in cells; nest tables for finer tiles.</p>
+                    </fieldset>
+                </td>
+                <td valign="top" width="60%">
+                    <fieldset>
+                        <legend>Main</legend>
+                        <p>Column widths come from <code>width="..."</code> on the <code>td</code> — an HTML attribute, not CSS.</p>
+                    </fieldset>
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+
+    <fieldset id="lock-demo">
+        <legend>Disabled group and hidden panel</legend>
+        <fieldset disabled>
+            <legend>Inference (locked)</legend>
+            <textarea rows="2" cols="40" placeholder="Load a model first..."></textarea>
+            <div><button type="button">▶ Send</button></div>
+        </fieldset>
+        <p>
+            <button type="button" onclick="document.getElementById('extra').hidden = !document.getElementById('extra').hidden">Toggle hidden panel</button>
+        </p>
+        <fieldset id="extra" hidden>
+            <legend>Extra options</legend>
+            <p>Started hidden with the <code>hidden</code> attribute. Toggled with <code>el.hidden</code> — never <code>style.display</code>.</p>
+        </fieldset>
+    </fieldset>
+
+    <hr>
+    <p><output id="gallery-status">Ready.</output></p>
+</form>
+
+<script>
+  const say = (msg) => { document.getElementById('gallery-status').textContent = msg; };
+</script>
+
+</body>
+</html>
