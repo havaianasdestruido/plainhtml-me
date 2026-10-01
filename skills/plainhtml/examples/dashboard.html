@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Fleet Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+<h1>Fleet Dashboard</h1>
+<p>Ops monitor for three services. Stat tiles, a live table with <code>meter</code> gauges, exclusive <code>details</code> tabs, an ASCII chart, a confirm modal, and a popover menu — all plain HTML, no CSS.</p>
+
+<form id="dash-form" onsubmit="return false;">
+
+    <fieldset>
+        <legend>Overview</legend>
+        <table>
+            <tr>
+                <td valign="top" width="25%"><small>Uptime</small><br><strong>14d 6h</strong></td>
+                <td valign="top" width="25%"><small>Requests / min</small><br><strong>1,204</strong></td>
+                <td valign="top" width="25%"><small>Error rate</small><br><strong>0.3%</strong></td>
+                <td valign="top" width="25%"><small>Queue depth</small><br><mark>27</mark></td>
+            </tr>
+        </table>
+    </fieldset>
+
+    <table>
+        <tr>
+            <td valign="top" width="65%">
+                <fieldset>
+                    <legend>Services</legend>
+                    <table>
+                        <tr><th>Service</th><th>Status</th><th>Latency</th><th>Load</th><th></th></tr>
+                        <tr>
+                            <td><code>api</code></td>
+                            <td><mark>✓ healthy</mark></td>
+                            <td><meter min="0" max="200" low="50" high="120" optimum="20" value="42"></meter> 42ms</td>
+                            <td><meter min="0" max="100" low="50" high="85" optimum="20" value="52"></meter> 52%</td>
+                            <td><button type="button" onclick="askRestart('api')">↻ Restart</button></td>
+                        </tr>
+                        <tr>
+                            <td><code>worker</code></td>
+                            <td>⚠ degraded</td>
+                            <td><meter min="0" max="200" low="50" high="120" optimum="20" value="160"></meter> 160ms</td>
+                            <td><meter min="0" max="100" low="50" high="85" optimum="20" value="91"></meter> 91%</td>
+                            <td><button type="button" onclick="askRestart('worker')">↻ Restart</button></td>
+                        </tr>
+                        <tr>
+                            <td><code>scheduler</code></td>
+                            <td>○ off</td>
+                            <td><meter min="0" max="200" low="50" high="120" optimum="20" value="0"></meter> —</td>
+                            <td><meter min="0" max="100" low="50" high="85" optimum="20" value="0"></meter> 0%</td>
+                            <td><button type="button" onclick="askRestart('scheduler')">▶ Start</button></td>
+                        </tr>
+                    </table>
+                    <p>
+                        <button type="button" id="refresh-btn">↻ Refresh all</button>
+                        <button type="button" popovertarget="bulk-menu">Bulk actions ▾</button>
+                        <button type="button" onclick="document.getElementById('log-dlg').showModal()">▤ Open event log</button>
+                    </p>
+                    <div id="bulk-menu" popover>
+                        <p><button type="button" onclick="say('All services restarted (demo).')">↻ Restart all</button></p>
+                        <p><button type="button" onclick="say('All services stopped (demo).')">⏹ Stop all</button></p>
+                        <p><button type="button" onclick="say('Export queued (demo).')">⤓ Export CSV</button></p>
+                    </div>
+                </fieldset>
+            </td>
+            <td valign="top" width="35%">
+                <fieldset>
+                    <legend>Capacity</legend>
+                    <p>
+                        <label for="cap-cpu">cpu</label>
+                        <meter id="cap-cpu" min="0" max="100" low="40" high="80" optimum="20" value="52" style="width:100%"></meter> 52%
+                    </p>
+                    <p>
+                        <label for="cap-mem">mem</label>
+                        <meter id="cap-mem" min="0" max="100" low="40" high="80" optimum="20" value="78" style="width:100%"></meter> <mark>78%</mark>
+                    </p>
+                    <p>
+                        <label for="cap-dsk">disk</label>
+                        <meter id="cap-dsk" min="0" max="100" low="40" high="80" optimum="20" value="91" style="width:100%"></meter> <strong>91%</strong>
+                    </p>
+                    <blockquote><p>⚠ Disk above 90% on <code>worker-2</code>. Old caches will be pruned tonight.</p></blockquote>
+                </fieldset>
+            </td>
+        </tr>
+    </table>
+
+    <fieldset>
+        <legend>Telemetry</legend>
+        <details name="telemetry" open>
+            <summary>Throughput chart</summary>
+            <pre>
+  req/s  ▁▂▃▅▆▇█▇▆▅▃▃▂▂▃▅▇█▇▆▅▄▃
+         00:00      06:00      12:00      18:00
+            </pre>
+        </details>
+        <details name="telemetry">
+            <summary>Numbers</summary>
+            <table>
+                <tr><th>hour</th><th>req/s</th><th>errors</th><th>p95</th></tr>
+                <tr><td>18:00</td><td>1,180</td><td>4</td><td>121ms</td></tr>
+                <tr><td>19:00</td><td>1,204</td><td>2</td><td>98ms</td></tr>
+                <tr><td>20:00</td><td>1,076</td><td>11</td><td>240ms</td></tr>
+            </table>
+        </details>
+        <details name="telemetry">
+            <summary>Notes</summary>
+            <p contenteditable="true">Click to type shift notes here...</p>
+        </details>
+    </fieldset>
+
+    <fieldset>
+        <legend>Deploy a fix</legend>
+        <label for="fix-input">Patch description:</label>
+        <input id="fix-input" type="text" size="50" placeholder="raise worker pool to 8">
+        <div>
+            <button type="button" id="dryrun-btn">▷ Dry run</button>
+            <button type="button" id="deploy-btn">▶ Deploy</button>
+        </div>
+        <p><output id="deploy-status">Idle.</output></p>
+        <progress id="deploy-progress" max="100" value="0" style="width:100%" hidden></progress>
+    </fieldset>
+
+    <dialog id="log-dlg">
+        <form method="dialog">
+            <fieldset>
+                <legend>Event log</legend>
+                <pre id="event-log">[20:01:11] worker latency 160ms (threshold 120ms)
+[20:02:40] disk 91% on worker-2
+[20:05:02] scheduler stopped by operator</pre>
+                <button>Close</button>
+            </fieldset>
+        </form>
+    </dialog>
+
+    <dialog id="restart-dlg">
+        <form method="dialog">
+            <fieldset>
+                <legend>Confirm</legend>
+                <p id="restart-q">Restart this service?</p>
+                <button value="yes">✓ Yes, restart</button>
+                <button value="no">✕ Cancel</button>
+            </fieldset>
+        </form>
+    </dialog>
+
+    <hr>
+    <p><output id="dash-status">All systems nominal.</output></p>
+</form>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  const say = (msg) => { $('dash-status').textContent = msg; };
+
+  const askRestart = (svc) => {
+    $('restart-q').textContent = 'Restart ' + svc + '? It will drop in-flight requests.';
+    const dlg = $('restart-dlg');
+    dlg.returnValue = '';
+    dlg.onclose = () => {
+      say(dlg.returnValue === 'yes' ? svc + ' restarted (demo).' : 'Restart cancelled.');
+    };
+    dlg.showModal();
+  };
+
+  $('refresh-btn').onclick = () => { say('Metrics refreshed.'); };
+
+  const runJob = (label) => {
+    const bar = $('deploy-progress');
+    bar.hidden = false;
+    let v = 0;
+    $('deploy-status').textContent = label + '... 0%';
+    const t = setInterval(() => {
+      bar.value = v += 10;
+      $('deploy-status').textContent = label + '... ' + v + '%';
+      if (v >= 100) {
+        clearInterval(t);
+        bar.hidden = true;
+        $('deploy-status').textContent = label + ' complete.';
+      }
+    }, 120);
+  };
+
+  $('dryrun-btn').onclick = () => runJob('Dry run');
+  $('deploy-btn').onclick = () => runJob('Deploy');
+</script>
+
+</body>
+</html>
